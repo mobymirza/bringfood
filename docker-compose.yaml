@@ -1,33 +1,3 @@
-#version: '3.8'
-#
-#services:
-#  db:
-#    image: mariadb:latest
-#    environment:
-#     MARIADB_ROOT_PASSWORD: root
-#
-#  phpmyadmin:
-#    image: phpmyadmin:latest
-#    ports:
-#      - "8080:80"
-#    depends_on:
-#      - db
-#
-#  php:
-#    build:
-#      context: .
-#      dockerfile: Docker/php/Dockerfile
-#    depends_on:
-#      - db
-#
-#  nginx:
-#    build:
-#      context: .
-#      dockerfile: Docker/nginx/Dockerfile
-#    depends_on:
-#      - php
-#    ports:
-#      - "3030:80"
 version: '3'
 
 services:
@@ -35,20 +5,23 @@ services:
     image: mariadb:latest
     environment:
       MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: bringfood
     volumes:
-      -  ./db:/var/lib/mysql
+      - db:/var/lib/mysql
 
   myadmin:
     image: phpmyadmin:latest
     ports:
       - "8080:80"
     depends_on:
-      -  db
+      - db
 
   php:
     build:
       context: .
       dockerfile: Docker/php/Dockerfile
+    volumes:
+      - .:/var/www/html
     depends_on:
       -  db
 
@@ -60,3 +33,5 @@ services:
       -  php
     ports:
       - "3030:80"
+volumes:
+  db:
